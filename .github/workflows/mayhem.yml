@@ -13,10 +13,10 @@ env:
   SEEK_ITER_MAYHEMFILE: /mayhem/seek_iter.mayhemfile
   TRIE_CODEC_PROOF_MAYHEMFILE: /mayhem/trie_codec_proof.mayhemfile
   TRIE_PROOF_INVALID_MAYHEMFILE: /mayhem/trie_proof_invalid.mayhemfile
-  TRIE_PROOF_VALID: /mayhem/trie_proof_valid.mayhemfile
-  TRIE_ROOT_FIX_LEN: /mayhem/trie_root_fix_len.mayhemfile
-  TRIE_ROOT_NEW: /mayhem/trie_root_new.mayhemfile
-  TRIE_ROOT: /mayhem/trie_root.mayhemfile
+  TRIE_PROOF_VALID_MAYHEMFILE: /mayhem/trie_proof_valid.mayhemfile
+  TRIE_ROOT_FIX_LEN_MAYHEMFILE: /mayhem/trie_root_fix_len.mayhemfile
+  TRIE_ROOT_NEW_MAYHEMFILE: /mayhem/trie_root_new.mayhemfile
+  TRIE_ROOT_MAYHEMFILE: /mayhem/trie_root.mayhemfile
 
 jobs:
   build:
@@ -101,28 +101,28 @@ jobs:
         uses: ForAllSecure/mcode-action@v1
         with:
           mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
-          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_PROOF_VALID }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_PROOF_VALID_MAYHEMFILE }}
           sarif-output: sarif
 
       - name: Start analysis for trie_root_fix_len
         uses: ForAllSecure/mcode-action@v1
         with:
           mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
-          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_FIX_LEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_FIX_LEN_MAYHEMFILE }}
           sarif-output: sarif
 
       - name: Start analysis for trie_root_new
         uses: ForAllSecure/mcode-action@v1
         with:
           mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
-          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_NEW }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_NEW_MAYHEMFILE }}
           sarif-output: sarif
 
       - name: Start analysis for trie_root
         uses: ForAllSecure/mcode-action@v1
         with:
           mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
-          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_MAYHEMFILE }}
           sarif-output: sarif
 
       - name: Upload SARIF file(s)
