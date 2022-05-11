@@ -1,0 +1,7 @@
+project: trie
+
+target: prefix_iter
+
+cmds:
+    - cmd: /prefix_iter
+    libfuzzer: true

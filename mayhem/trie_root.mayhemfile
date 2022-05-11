@@ -1,0 +1,7 @@
+project: trie
+
+target: trie_root
+
+cmds:
+    - cmd: /trie_root
+    libfuzzer: true

@@ -1,0 +1,7 @@
+project: trie
+
+target: no_ext_insert
+
+cmds:
+    - cmd: /no_ext_insert
+    libfuzzer: true
