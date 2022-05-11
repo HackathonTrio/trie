@@ -1,5 +1,5 @@
 # Build Stage
-FROM --platform=linux/amd64 rustlang/rust:latest as builder
+FROM --platform=linux/amd64 rustlang/rust:nightly as builder
 
 ## Install build dependencies.
 RUN apt-get update && \
@@ -11,7 +11,7 @@ WORKDIR /trie
 
 ## Build instructions
 WORKDIR /trie/trie-db/fuzz
-RUN cargo +latest rustc --bin secio_crypto_decrypt_cipher -- \
+RUN cargo +nightly rustc --bin secio_crypto_decrypt_cipher -- \
     -C passes='sancov-module' \
     -C llvm-args='-sanitizer-coverage-level=3' \
     -C llvm-args='-sanitizer-coverage-inline-8bit-counters' \
