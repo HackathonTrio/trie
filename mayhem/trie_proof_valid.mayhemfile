@@ -1,7 +1,0 @@
-project: trie
-
-target: trie_proof_valid
-
-cmds:
-    - cmd: /trie_proof_valid
-    libfuzzer: true

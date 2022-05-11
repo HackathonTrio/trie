@@ -1,7 +1,0 @@
-project: trie
-
-target: seek_iter
-
-cmds:
-    - cmd: /seek_iter
-    libfuzzer: true

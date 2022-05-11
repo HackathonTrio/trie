@@ -1,7 +1,0 @@
-project: trie
-
-target: trie_codec_proof
-
-cmds:
-    - cmd: /trie_codec_proof
-    libfuzzer: true

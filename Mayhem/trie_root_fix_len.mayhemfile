@@ -1,7 +1,0 @@
-project: trie
-
-target: trie_root_fix_len
-
-cmds:
-    - cmd: /trie_root_fix_len
-    libfuzzer: true
