@@ -1,0 +1,131 @@
+name: Mayhem
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  NO_EXT_INSERT_REM_MAYHEMFILE: /mayhem/no_ext_insert_rem.mayhemfile
+  NO_EXT_INSERT_MAYHEMFILE: /mayhem/no_ext_insert.mayhemfile
+  PREFIX_ITER_MAYHEMFILE: /mayhem/prefix_iter.mayhemfile
+  SEEK_ITER_MAYHEMFILE: /mayhem/seek_iter.mayhemfile
+  TRIE_CODEC_PROOF_MAYHEMFILE: /mayhem/trie_codec_proof.mayhemfile
+  TRIE_PROOF_INVALID_MAYHEMFILE: /mayhem/trie_proof_invalid.mayhemfile
+  TRIE_PROOF_VALID: /mayhem/trie_proof_valid.mayhemfile
+  TRIE_ROOT_FIX_LEN: /mayhem/trie_root_fix_len.mayhemfile
+  TRIE_ROOT_NEW: /mayhem/trie_root_new.mayhemfile
+  TRIE_ROOT: /mayhem/trie_root.mayhemfile
+
+jobs:
+  build:
+    name: "${{ matrix.os }} shared=${{ matrix.shared }} ${{ matrix.build_type }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        shared: [false]
+        build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            triplet: x64-linux
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Start analysis for no_ext_insert_rem
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.NO_EXT_INSERT_REM_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for no_ext_insert
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.NO_EXT_INSERT_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for prefix_iter
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.PREFIX_ITER_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for seek_iter
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.SEEK_ITER_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_codec_proof
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_CODEC_PROOF_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_proof_invalid
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_PROOF_INVALID_MAYHEMFILE }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_proof_valid
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_PROOF_VALID }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_root_fix_len
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_FIX_LEN }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_root_new
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT_NEW }}
+          sarif-output: sarif
+
+      - name: Start analysis for trie_root
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ steps.meta.outputs.tags }} --file ${{ env.TRIE_ROOT }}
+          sarif-output: sarif
+
+      - name: Upload SARIF file(s)
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: sarif
